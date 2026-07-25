@@ -939,7 +939,8 @@ function PutawayDashboardContent({
 
     const [productBarcode, setProductBarcode] =
   useState("");
-
+const [showScanner, setShowScanner] =
+  useState(false);
   const pendingProducts = products.filter(
     (product) =>
       product.status === "Putaway Pending"
@@ -997,6 +998,36 @@ const scanProduct = (e) => {
     alert("Product not found.");
   }
 };
+useEffect(() => {
+  if (!showScanner) return;
+
+  const scanner = new Html5QrcodeScanner(
+    "product-barcode-reader",
+    {
+      fps: 10,
+      qrbox: {
+        width: 250,
+        height: 150,
+      },
+    },
+    false
+  );
+
+  scanner.render(
+    (decodedText) => {
+      setProductBarcode(decodedText);
+      setShowScanner(false);
+      scanner.clear();
+    },
+    (errorMessage) => {
+      // Camera scan ke time normal scanning errors ignore
+    }
+  );
+
+  return () => {
+    scanner.clear().catch(() => {});
+  };
+}, [showScanner]);
   return (
     <>
       <div style={cardGridStyle}>
@@ -1062,9 +1093,31 @@ const scanProduct = (e) => {
             style={primaryButtonStyle}
           >
             🔍 Find Product
+            <button
+  type="button"
+  onClick={() =>
+    setShowScanner(!showScanner)
+  }
+  style={{
+    ...primaryButtonStyle,
+    background: "#16a34a",
+  }}
+>
+  📷 Scan Barcode
+</button>
           </button>
         </form>
-
+{showScanner && (
+  <div
+    style={{
+      marginTop: "20px",
+      marginBottom: "20px",
+      maxWidth: "500px",
+    }}
+  >
+    <div id="product-barcode-reader"></div>
+  </div>
+)}
         {productBarcode &&
           scannedProduct && (
             <div
