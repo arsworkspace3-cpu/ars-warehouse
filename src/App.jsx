@@ -881,10 +881,46 @@ function PutawayDashboardContent({
   products,
   updateProduct,
 }) {
+  const [basketId, setBasketId] =
+    useState("");
+
   const pendingProducts = products.filter(
     (product) =>
       product.status === "Putaway Pending"
   );
+
+  const basketProducts =
+    basketId.trim() === ""
+      ? []
+      : pendingProducts.filter(
+          (product) =>
+            product.basketId &&
+            product.basketId.toUpperCase() ===
+              basketId.trim().toUpperCase()
+        );
+
+  const scanBasket = (e) => {
+    e.preventDefault();
+
+    if (!basketId.trim()) {
+      alert("Please enter Basket ID");
+      return;
+    }
+
+    const foundProducts =
+      pendingProducts.filter(
+        (product) =>
+          product.basketId &&
+          product.basketId.toUpperCase() ===
+            basketId.trim().toUpperCase()
+      );
+
+    if (foundProducts.length === 0) {
+      alert(
+        "No pending products found in this basket."
+      );
+    }
+  };
 
   return (
     <>
@@ -901,7 +937,8 @@ function PutawayDashboardContent({
           value={
             pendingProducts.filter(
               (product) =>
-                product.qcStatus === "Pending"
+                product.qcStatus ===
+                "Pending"
             ).length
           }
           icon="🔍"
@@ -912,7 +949,7 @@ function PutawayDashboardContent({
           title="Total Quantity"
           value={pendingProducts.reduce(
             (total, product) =>
-              total + product.qty,
+              total + Number(product.qty),
             0
           )}
           icon="📦"
@@ -921,26 +958,92 @@ function PutawayDashboardContent({
       </div>
 
       <div style={sectionStyle}>
-        <h2>Pending Putaway Products</h2>
+        <h2>📦 Scan Putaway Basket</h2>
 
-        {pendingProducts.length === 0 ? (
-          <p style={{ color: "#16a34a" }}>
-            ✅ No pending putaway products.
+        <form
+          onSubmit={scanBasket}
+          style={{
+            display: "flex",
+            gap: "10px",
+            marginBottom: "20px",
+            flexWrap: "wrap",
+          }}
+        >
+          <input
+            type="text"
+            value={basketId}
+            onChange={(e) =>
+              setBasketId(e.target.value)
+            }
+            placeholder="Enter or Scan Basket ID"
+            style={{
+              ...inputStyle,
+              flex: 1,
+              minWidth: "250px",
+            }}
+          />
+
+          <button
+            type="submit"
+            style={primaryButtonStyle}
+          >
+            🔍 Search Basket
+          </button>
+        </form>
+
+        {basketId && (
+          <div
+            style={{
+              marginBottom: "20px",
+              padding: "15px",
+              background: "#eff6ff",
+              borderRadius: "10px",
+              color: "#1e40af",
+              fontWeight: "bold",
+            }}
+          >
+            Basket: {basketId}
+          </div>
+        )}
+
+        {basketId &&
+          basketProducts.length === 0 && (
+            <p style={{ color: "#dc2626" }}>
+              ❌ No pending products found in
+              this basket.
+            </p>
+          )}
+
+        {basketProducts.length > 0 && (
+          <>
+            <h2>
+              Products in {basketId}
+            </h2>
+
+            {basketProducts.map(
+              (product) => (
+                <PutawayCard
+                  key={product.id}
+                  product={product}
+                  updateProduct={
+                    updateProduct
+                  }
+                />
+              )
+            )}
+          </>
+        )}
+
+        {!basketId && (
+          <p style={{ color: "#6b7280" }}>
+            Scan or enter a basket ID to see
+            pending products.
           </p>
-        ) : (
-          pendingProducts.map((product) => (
-            <PutawayCard
-              key={product.id}
-              product={product}
-              updateProduct={updateProduct}
-            />
-          ))
         )}
       </div>
     </>
   );
 }
-
 function PutawayCard({
   product,
   updateProduct,
