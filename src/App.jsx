@@ -460,19 +460,55 @@ setProductForm({
     alert("Product added successfully!");
   };
 
-  const deleteProduct = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
+  const deleteProduct = async (id) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to permanently delete this product?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    const productRef = doc(
+      db,
+      "warehouse",
+      "products"
     );
 
-    if (!confirmDelete) return;
+    const snapshot = await getDoc(productRef);
 
-    const updatedProducts = products.filter(
-      (product) => product.id !== id
+    if (!snapshot.exists()) {
+      alert("Products data not found.");
+      return;
+    }
+
+    const currentProducts =
+      snapshot.data().items || [];
+
+    const updatedProducts =
+      currentProducts.filter(
+        (product) => product.id !== id
+      );
+
+    await setDoc(productRef, {
+      items: updatedProducts,
+    });
+
+    setProducts(updatedProducts);
+
+    alert(
+      "Product permanently deleted successfully!"
+    );
+  } catch (error) {
+    console.error(
+      "Permanent delete error:",
+      error
     );
 
-    saveProducts(updatedProducts);
-  };
+    alert(
+      "Product delete nahi ho paya."
+    );
+  }
+};
 
   const updateProduct = async (updatedProduct) => {
   const updatedProducts = products.map(
