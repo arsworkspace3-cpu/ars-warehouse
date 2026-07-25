@@ -70,6 +70,24 @@ function App() {
     useState("Dashboard");
 
 const [products, setProducts] = useState([]);
+const baskets = [
+  {
+    id: "ARSBKPP01",
+    name: "Putaway Basket 01",
+  },
+  {
+    id: "ARSBKPP02",
+    name: "Putaway Basket 02",
+  },
+  {
+    id: "ARSBKPP03",
+    name: "Putaway Basket 03",
+  },
+  {
+    id: "ARSBKPP04",
+    name: "Putaway Basket 04",
+  },
+];
 useEffect(() => {
   const loadProducts = async () => {
     try {
@@ -133,6 +151,7 @@ useEffect(() => {
     qty: "",
     expiry: "",
     batchNo: "",
+    basketId: "",
   });
 
   const handleLogin = (e) => {
@@ -749,6 +768,7 @@ await saveProducts(updatedProducts);
         {activePage === "Products" && (
           <ProductsPage
             products={products}
+            baskets={baskets}
             showProductForm={
               showProductForm
             }
@@ -1962,6 +1982,7 @@ function ProductsPage({
   addProduct,
   deleteProduct,
   editProduct,
+  baskets,
 }) {
   return (
     <>
@@ -2061,6 +2082,25 @@ function ProductsPage({
               placeholder="Batch Number *"
               style={inputStyle}
             />
+            <select
+  name="basketId"
+  value={productForm.basketId || ""}
+  onChange={handleProductChange}
+  style={inputStyle}
+>
+  <option value="">
+    Select Putaway Basket *
+  </option>
+
+  {baskets.map((basket) => (
+    <option
+      key={basket.id}
+      value={basket.id}
+    >
+      {basket.id}
+    </option>
+  ))}
+</select>
           </div>
 
           <div style={noticeStyle}>
