@@ -17,6 +17,7 @@ import {
   setDoc,
   doc,
    addDoc,
+    deleteDoc,
 } from "firebase/firestore";
 const uploadImageToCloudinary = async (file) => {
   const formData = new FormData();
@@ -242,22 +243,50 @@ const saveProducts = async (updatedProducts) => {
   try {
     setProducts(updatedProducts);
 
+    // Firebase me currently saved products ki list lao
+    const snapshot = await getDocs(
+      collection(db, "products")
+    );
+
+    // Jo products delete ho chuke hain, unke Firebase documents delete karo
+    for (const firebaseDoc of snapshot.docs) {
+      const exists = updatedProducts.some(
+        (product) =>
+          String(product.id) === firebaseDoc.id
+      );
+
+      if (!exists) {
+        await deleteDoc(firebaseDoc.ref);
+      }
+    }
+
+    // New aur updated products save karo
     for (const product of updatedProducts) {
       const cleanProduct = Object.fromEntries(
         Object.entries(product).filter(
-          ([key, value]) => value !== undefined
+          ([key, value]) =>
+            value !== undefined
         )
       );
 
       await setDoc(
-        doc(db, "products", String(product.id)),
+        doc(
+          db,
+          "products",
+          String(product.id)
+        ),
         cleanProduct
       );
     }
 
-    alert("Products saved online successfully!");
+    alert(
+      "Products saved online successfully!"
+    );
   } catch (error) {
-    console.error("Save products error:", error);
+    console.error(
+      "Save products error:",
+      error
+    );
 
     alert(
       "Products save nahi ho paye: " +
@@ -265,6 +294,8 @@ const saveProducts = async (updatedProducts) => {
     );
   }
 };
+
+
  const saveOrders = async (updatedOrders) => {
   try {
     setOrders(updatedOrders);
