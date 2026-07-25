@@ -1815,28 +1815,55 @@ const generatePendingPutawayPDF = () => {
   }
 
   const rows = pendingProducts
-    .map(
-      (product, index) => `
-        <tr>
-          <td>${index + 1}</td>
-          <td>${product.name}</td>
-          <td>${product.qty}</td>
-          <td>${product.barcode}</td>
-        </tr>
-      `
-    )
-    .join("");
+  .map(
+    (product, index) => `
+      <tr>
+        <td>${index + 1}</td>
 
+        <td>
+          <b>${product.name}</b>
+        </td>
+
+        <td>
+          ${product.qty}
+        </td>
+
+        <td>
+          <svg
+            class="barcode"
+            data-barcode="${product.barcode}"
+          ></svg>
+
+          <div class="barcode-text">
+            ${product.barcode}
+          </div>
+        </td>
+      </tr>
+    `
+  )
+  .join("");
   printWindow.document.write(`
     <html>
       <head>
         <title>Pending Putaway</title>
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
         <style>
           @page {
             size: A4;
             margin: 20mm;
           }
+            .barcode {
+  width: 220px;
+  height: 70px;
+  max-width: 100%;
+}
+
+.barcode-text {
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: bold;
+}
 
           body {
             font-family: Arial;
@@ -1882,11 +1909,29 @@ const generatePendingPutawayPDF = () => {
           </tbody>
         </table>
 
-        <script>
-          window.onload = function () {
-            window.print();
-          };
-        </script>
+    <script>
+  window.onload = function () {
+    document
+      .querySelectorAll(".barcode")
+      .forEach(function (barcode) {
+        JsBarcode(
+          barcode,
+          barcode.dataset.barcode,
+          {
+            format: "CODE128",
+            displayValue: false,
+            width: 2,
+            height: 60,
+            margin: 5,
+          }
+        );
+      });
+
+    setTimeout(function () {
+      window.print();
+    }, 500);
+  };
+</script>
       </body>
     </html>
   `);
