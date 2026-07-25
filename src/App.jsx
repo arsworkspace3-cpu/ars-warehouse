@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { Html5QrcodeScanner } from "html5-qrcode";
 const BASKETS = [
   "ARSBKPP01",
   "ARSBKPP02",
