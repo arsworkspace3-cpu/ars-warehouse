@@ -941,6 +941,8 @@ function PutawayDashboardContent({
   useState("");
 const [showScanner, setShowScanner] =
   useState(false);
+  const [showBasketScanner, setShowBasketScanner] =
+  useState(false);
   const pendingProducts = products.filter(
     (product) =>
       product.status === "Putaway Pending"
@@ -1199,8 +1201,33 @@ useEffect(() => {
           >
             🔍 Search Basket
           </button>
+          <button
+  type="button"
+  onClick={() =>
+    setShowBasketScanner(
+      !showBasketScanner
+    )
+  }
+  style={{
+    ...primaryButtonStyle,
+    background: "#16a34a",
+  }}
+>
+  📷 Scan Basket
+</button>
         </form>
-
+<button
+  type="button"
+  onClick={() =>
+    setShowScanner(!showScanner)
+  }
+  style={{
+    ...primaryButtonStyle,
+    background: "#16a34a",
+  }}
+>
+  📷 Scan Basket
+</button>
         {basketId && (
           <div
             style={{
