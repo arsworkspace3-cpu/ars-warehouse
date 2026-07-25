@@ -1793,10 +1793,110 @@ function Dashboard({ products, orders }) {
     (order) =>
       order.status === "Delivered"
   ).length;
+const generatePendingPutawayPDF = () => {
+  const pendingProducts = products.filter(
+    (product) =>
+      product.status === "Putaway Pending"
+  );
 
+  if (pendingProducts.length === 0) {
+    alert("No pending putaway products found.");
+    return;
+  }
+
+  const printWindow = window.open(
+    "",
+    "_blank"
+  );
+
+  if (!printWindow) {
+    alert("Please allow pop-ups.");
+    return;
+  }
+
+  const rows = pendingProducts
+    .map(
+      (product, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${product.name}</td>
+          <td>${product.qty}</td>
+          <td>${product.barcode}</td>
+        </tr>
+      `
+    )
+    .join("");
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Pending Putaway</title>
+
+        <style>
+          @page {
+            size: A4;
+            margin: 20mm;
+          }
+
+          body {
+            font-family: Arial;
+          }
+
+          h1 {
+            text-align: center;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+
+          th,
+          td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+          }
+
+          th {
+            background: #f3f4f6;
+          }
+        </style>
+      </head>
+
+      <body>
+        <h1>PENDING PUTAWAY</h1>
+
+        <table>
+          <thead>
+            <tr>
+              <th>S.R.</th>
+              <th>Product Name</th>
+              <th>Qty</th>
+              <th>Barcode</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+
+        <script>
+          window.onload = function () {
+            window.print();
+          };
+        </script>
+      </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+};
   return (
     <>
       <div style={cardGridStyle}>
+        
         <StatCard
           title="Orders Pending"
           value={ordersPending}
@@ -1839,7 +1939,25 @@ function Dashboard({ products, orders }) {
           description="Products expiring soon"
         />
       </div>
+<div
+  style={{
+    ...sectionStyle,
+    marginBottom: "20px",
+  }}
+>
+  <h2>📄 Pending Putaway Report</h2>
 
+  <button
+    type="button"
+    onClick={generatePendingPutawayPDF}
+    style={{
+      ...primaryButtonStyle,
+      background: "#16a34a",
+    }}
+  >
+    📄 Download Pending Putaway PDF
+  </button>
+</div>
       <div style={twoColumnStyle}>
         <div style={sectionStyle}>
           <h2>Warehouse Status</h2>
@@ -2357,7 +2475,17 @@ function ProductsPage({
       <div style={pageHeaderStyle}>
         <div>
           <h2>Product Management</h2>
-
+<button
+  type="button"
+  onClick={generatePendingPutawayPDF}
+  style={{
+    ...primaryButtonStyle,
+    background: "#16a34a",
+    marginLeft: "10px",
+  }}
+>
+  📄 Pending Putaway PDF
+</button>
           <p style={{ color: "#6b7280" }}>
             Add and manage warehouse products.
           </p>
