@@ -399,6 +399,25 @@ const editProduct = async (product) => {
 
   alert("Product updated successfully!");
 };
+const generateNextBarcode = (products) => {
+  const barcodeNumbers = products
+    .map((product) => {
+      const match = String(
+        product.barcode || ""
+      ).match(/^ARSPV(\d+)$/);
+
+      return match
+        ? Number(match[1])
+        : 0;
+    });
+
+  const highestNumber =
+    Math.max(...barcodeNumbers, 100000);
+
+  return `ARSPV${highestNumber + 1}`;
+};
+
+
 const addProduct = async (e) => {
     e.preventDefault();
 
@@ -455,7 +474,7 @@ const addProduct = async (e) => {
 
       location: "Pending Putaway",
 
-      barcode: generateBarcode(),
+      barcode: generateNextBarcode(products),
 
       status: "Putaway Pending",
 
@@ -5039,7 +5058,8 @@ const openOrderTracking = (order) => {
       return;
     }
 
-    const nextOrderNumber =
+    
+  OrderNumber =
       orders.length + 100001;
 
     const orderId =
