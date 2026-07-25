@@ -761,6 +761,7 @@ await saveProducts(updatedProducts);
             }
             addProduct={addProduct}
             deleteProduct={deleteProduct}
+            editProduct={editProduct}
           />
         )}
 
