@@ -1215,33 +1215,7 @@ useEffect(() => {
 >
   📷 Scan Basket
 </button>
-        </form>
-<button
-  type="button"
-  onClick={() =>
-    setShowScanner(!showScanner)
-  }
-  style={{
-    ...primaryButtonStyle,
-    background: "#16a34a",
-  }}
->
-  📷 Scan Basket
-</button>
-        {basketId && (
-          <div
-            style={{
-              marginBottom: "20px",
-              padding: "15px",
-              background: "#eff6ff",
-              borderRadius: "10px",
-              color: "#1e40af",
-              fontWeight: "bold",
-            }}
-          >
-            Basket: {basketId}
-          </div>
-        )}
+       </form>
 
         {basketId &&
           basketProducts.length === 0 && (
