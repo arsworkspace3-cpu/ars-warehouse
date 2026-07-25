@@ -288,7 +288,55 @@ const saveProducts = async (updatedProducts) => {
 
     return "ARSPV" + nextNumber;
   };
+const editProduct = async (product) => {
+  const newName = prompt(
+    "Product Name:",
+    product.name
+  );
 
+  if (newName === null) return;
+
+  const newQty = prompt(
+    "Quantity:",
+    product.qty
+  );
+
+  if (newQty === null) return;
+
+  const newExpiry = prompt(
+    "Expiry MM/YYYY:",
+    product.expiry
+  );
+
+  if (newExpiry === null) return;
+
+  const newBatchNo = prompt(
+    "Batch Number:",
+    product.batchNo
+  );
+
+  if (newBatchNo === null) return;
+
+  const updatedProducts = products.map(
+    (item) => {
+      if (item.id === product.id) {
+        return {
+          ...item,
+          name: newName,
+          qty: Number(newQty),
+          expiry: newExpiry,
+          batchNo: newBatchNo,
+        };
+      }
+
+      return item;
+    }
+  );
+
+  await saveProducts(updatedProducts);
+
+  alert("Product updated successfully!");
+};
 const addProduct = async (e) => {
     e.preventDefault();
 
@@ -1912,6 +1960,7 @@ function ProductsPage({
   handleProductChange,
   addProduct,
   deleteProduct,
+  editProduct,
 }) {
   return (
     <>
@@ -1926,9 +1975,7 @@ function ProductsPage({
 
         <button
           onClick={() =>
-            setShowProductForm(
-              !showProductForm
-            )
+            setShowProductForm(!showProductForm)
           }
           style={primaryButtonStyle}
         >
@@ -1954,9 +2001,7 @@ function ProductsPage({
 
             <input
               name="description"
-              value={
-                productForm.description
-              }
+              value={productForm.description}
               onChange={handleProductChange}
               placeholder="Product Description"
               style={inputStyle}
@@ -2140,9 +2185,21 @@ function ProductsPage({
                     <td style={tableCellStyle}>
                       <button
                         onClick={() =>
-                          deleteProduct(
-                            product.id
-                          )
+                          editProduct(product)
+                        }
+                        style={{
+                          ...primaryButtonStyle,
+                          marginRight: "8px",
+                          padding: "8px 12px",
+                          background: "#2563eb",
+                        }}
+                      >
+                        ✏️ Edit
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          deleteProduct(product.id)
                         }
                         style={deleteButtonStyle}
                       >
