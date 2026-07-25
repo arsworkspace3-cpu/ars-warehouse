@@ -153,6 +153,12 @@ useEffect(() => {
     batchNo: "",
     basketId: "",
   });
+  const BASKETS = [
+  "ARSBKPP01",
+  "ARSBKPP02",
+  "ARSBKPP03",
+  "ARSBKPP04",
+];
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -365,7 +371,8 @@ const addProduct = async (e) => {
       !productForm.rate ||
       !productForm.qty ||
       !productForm.expiry ||
-      !productForm.batchNo
+      !productForm.batchNo ||
+      !productForm.basketId 
     ) {
       alert(
         "Please fill all required product details."
@@ -407,6 +414,8 @@ const addProduct = async (e) => {
 
       batchNo: productForm.batchNo,
 
+      basketId: productForm.basketId,
+
       location: "Pending Putaway",
 
       barcode: generateBarcode(),
@@ -429,15 +438,16 @@ const addProduct = async (e) => {
     ];
 await saveProducts(updatedProducts);
 
-    setProductForm({
-      name: "",
-      description: "",
-      type: "",
-      rate: "",
-      qty: "",
-      expiry: "",
-      batchNo: "",
-    });
+setProductForm({
+  name: "",
+  description: "",
+  type: "",
+  rate: "",
+  qty: "",
+  expiry: "",
+  batchNo: "",
+  basketId: "",
+});
 
     setShowProductForm(false);
 
@@ -2082,6 +2092,51 @@ function ProductsPage({
               placeholder="Batch Number *"
               style={inputStyle}
             />
+            <select
+  name="basketId"
+  value={productForm.basketId}
+  onChange={handleProductChange}
+  style={inputStyle}
+>
+  <option value="">
+    Select Basket *
+  </option>
+
+  {BASKETS.map((basket) => (
+    <option
+      key={basket}
+      value={basket}
+    >
+      {basket}
+    </option>
+  ))}
+</select>
+            <select
+  name="basketId"
+  value={productForm.basketId || ""}
+  onChange={handleProductChange}
+  style={inputStyle}
+>
+  <option value="">
+    Select Basket *
+  </option>
+
+  <option value="ARSBKPP01">
+    ARSBKPP01
+  </option>
+
+  <option value="ARSBKPP02">
+    ARSBKPP02
+  </option>
+
+  <option value="ARSBKPP03">
+    ARSBKPP03
+  </option>
+
+  <option value="ARSBKPP04">
+    ARSBKPP04
+  </option>
+</select>
             <select
   name="basketId"
   value={productForm.basketId || ""}
