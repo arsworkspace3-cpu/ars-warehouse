@@ -937,6 +937,9 @@ function PutawayDashboardContent({
   const [basketId, setBasketId] =
     useState("");
 
+    const [productBarcode, setProductBarcode] =
+  useState("");
+
   const pendingProducts = products.filter(
     (product) =>
       product.status === "Putaway Pending"
@@ -974,7 +977,26 @@ function PutawayDashboardContent({
       );
     }
   };
+const scannedProduct =
+  products.find(
+    (product) =>
+      product.barcode &&
+      product.barcode.toUpperCase() ===
+        productBarcode.trim().toUpperCase()
+  );
 
+const scanProduct = (e) => {
+  e.preventDefault();
+
+  if (!productBarcode.trim()) {
+    alert("Please enter Product Barcode");
+    return;
+  }
+
+  if (!scannedProduct) {
+    alert("Product not found.");
+  }
+};
   return (
     <>
       <div style={cardGridStyle}>
@@ -1009,7 +1031,89 @@ function PutawayDashboardContent({
           description="Units waiting"
         />
       </div>
+      <div style={sectionStyle}>
+        <h2>🔍 Scan Product Barcode</h2>
 
+        <form
+          onSubmit={scanProduct}
+          style={{
+            display: "flex",
+            gap: "10px",
+            marginBottom: "20px",
+            flexWrap: "wrap",
+          }}
+        >
+          <input
+            type="text"
+            value={productBarcode}
+            onChange={(e) =>
+              setProductBarcode(e.target.value)
+            }
+            placeholder="Enter or Scan Product Barcode"
+            style={{
+              ...inputStyle,
+              flex: 1,
+              minWidth: "250px",
+            }}
+          />
+
+          <button
+            type="submit"
+            style={primaryButtonStyle}
+          >
+            🔍 Find Product
+          </button>
+        </form>
+
+        {productBarcode &&
+          scannedProduct && (
+            <div
+              style={{
+                padding: "20px",
+                background: "#f0fdf4",
+                borderRadius: "10px",
+                border: "1px solid #bbf7d0",
+              }}
+            >
+              <h3>✅ Product Found</h3>
+
+              <p>
+                <b>Product:</b>{" "}
+                {scannedProduct.name}
+              </p>
+
+              <p>
+                <b>Barcode:</b>{" "}
+                {scannedProduct.barcode}
+              </p>
+
+              <p>
+                <b>Quantity:</b>{" "}
+                {scannedProduct.qty}
+              </p>
+
+              <p>
+                <b>Location:</b>{" "}
+                {scannedProduct.location}
+              </p>
+
+              <p>
+                <b>Batch:</b>{" "}
+                {scannedProduct.batchNo}
+              </p>
+
+              <p>
+                <b>Expiry:</b>{" "}
+                {scannedProduct.expiry}
+              </p>
+
+              <p>
+                <b>Status:</b>{" "}
+                {scannedProduct.status}
+              </p>
+            </div>
+          )}
+      </div>
       <div style={sectionStyle}>
         <h2>📦 Scan Putaway Basket</h2>
 
