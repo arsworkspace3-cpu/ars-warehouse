@@ -499,32 +499,11 @@ setProductForm({
   if (!confirmDelete) return;
 
   try {
-    const productRef = doc(
-      db,
-      "warehouse",
-      "products"
+    const updatedProducts = products.filter(
+      (product) => product.id !== id
     );
 
-    const snapshot = await getDoc(productRef);
-
-    if (!snapshot.exists()) {
-      alert("Products data not found.");
-      return;
-    }
-
-    const currentProducts =
-      snapshot.data().items || [];
-
-    const updatedProducts =
-      currentProducts.filter(
-        (product) => product.id !== id
-      );
-
-    await setDoc(productRef, {
-      items: updatedProducts,
-    });
-
-    setProducts(updatedProducts);
+    await saveProducts(updatedProducts);
 
     alert(
       "Product permanently deleted successfully!"
@@ -536,7 +515,8 @@ setProductForm({
     );
 
     alert(
-      "Product delete nahi ho paya."
+      "Product delete nahi ho paya: " +
+        error.message
     );
   }
 };
