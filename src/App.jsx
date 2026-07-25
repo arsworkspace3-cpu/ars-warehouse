@@ -2253,7 +2253,7 @@ function ProductsPage({
     ARSBKPP04
   </option>
 </select>
-            <select
+           <select
   name="basketId"
   value={productForm.basketId || ""}
   onChange={handleProductChange}
