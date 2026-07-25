@@ -2520,17 +2520,7 @@ function ProductsPage({
       <div style={pageHeaderStyle}>
         <div>
           <h2>Product Management</h2>
-<button
-  type="button"
-  onClick={generatePendingPutawayPDF}
-  style={{
-    ...primaryButtonStyle,
-    background: "#16a34a",
-    marginLeft: "10px",
-  }}
->
-  📄 Pending Putaway PDF
-</button>
+
           <p style={{ color: "#6b7280" }}>
             Add and manage warehouse products.
           </p>
