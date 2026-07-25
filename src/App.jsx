@@ -1122,8 +1122,14 @@ useEffect(() => {
             type="submit"
             style={primaryButtonStyle}
           >
-            🔍 Find Product
-            <button
+          <button
+  type="submit"
+  style={primaryButtonStyle}
+>
+  🔍 Find Product
+</button>
+
+<button
   type="button"
   onClick={() =>
     setShowScanner(!showScanner)
