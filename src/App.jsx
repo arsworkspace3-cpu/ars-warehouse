@@ -1216,7 +1216,17 @@ useEffect(() => {
   📷 Scan Basket
 </button>
        </form>
-
+{showBasketScanner && (
+  <div
+    style={{
+      marginTop: "20px",
+      marginBottom: "20px",
+      maxWidth: "500px",
+    }}
+  >
+    <div id="basket-barcode-reader"></div>
+  </div>
+)} 
         {basketId &&
           basketProducts.length === 0 && (
             <p style={{ color: "#dc2626" }}>
