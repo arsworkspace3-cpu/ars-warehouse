@@ -2211,14 +2211,21 @@ function ProductsPage({
     Select Basket *
   </option>
 
-  {BASKETS.map((basket) => (
-    <option
-      key={basket}
-      value={basket}
-    >
-      {basket}
-    </option>
-  ))}
+ <option value="ARSBKPP01">
+  ARSBKPP01
+</option>
+
+<option value="ARSBKPP02">
+  ARSBKPP02
+</option>
+
+<option value="ARSBKPP03">
+  ARSBKPP03
+</option>
+
+<option value="ARSBKPP04">
+  ARSBKPP04
+</option>
 </select>
             <select
   name="basketId"
