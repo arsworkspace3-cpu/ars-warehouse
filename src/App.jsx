@@ -1030,6 +1030,34 @@ useEffect(() => {
     scanner.clear().catch(() => {});
   };
 }, [showScanner]);
+useEffect(() => {
+  if (!showBasketScanner) return;
+
+  const scanner = new Html5QrcodeScanner(
+    "basket-barcode-reader",
+    {
+      fps: 10,
+      qrbox: {
+        width: 250,
+        height: 150,
+      },
+    },
+    false
+  );
+
+  scanner.render(
+    (decodedText) => {
+      setBasketId(decodedText);
+      setShowBasketScanner(false);
+      scanner.clear();
+    },
+    () => {}
+  );
+
+  return () => {
+    scanner.clear().catch(() => {});
+  };
+}, [showBasketScanner]);
   return (
     <>
       <div style={cardGridStyle}>
