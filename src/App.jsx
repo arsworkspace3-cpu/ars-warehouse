@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
 
+const BASKETS = [
+  "ARSBKPP01",
+  "ARSBKPP02",
+  "ARSBKPP03",
+  "ARSBKPP04",
+];
 import { db } from "./firebase";
 import { Html5Qrcode } from "html5-qrcode";
 import JsBarcode from "jsbarcode";
