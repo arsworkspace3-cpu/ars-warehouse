@@ -416,7 +416,41 @@ const generateNextBarcode = (products) => {
 
   return `ARSPV${highestNumber + 1}`;
 };
+const formatExpiryDate = (expiry) => {
+  if (!expiry) return "";
 
+  const match = String(expiry).match(
+    /^(\d{1,2})\/(\d{4})$/
+  );
+
+  if (!match) {
+    return expiry;
+  }
+
+  const month = Number(match[1]);
+  const year = match[2];
+
+  if (month < 1 || month > 12) {
+    return expiry;
+  }
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  return `${monthNames[month - 1]}/${year}`;
+};
 
 const addProduct = async (e) => {
     e.preventDefault();
@@ -466,7 +500,9 @@ const addProduct = async (e) => {
 
       qty: Number(productForm.qty),
 
-      expiry: productForm.expiry,
+      expiry: formatExpiryDate(
+  productForm.expiry
+),
 
       batchNo: productForm.batchNo,
 
@@ -2150,6 +2186,237 @@ const generatePendingPutawayPDF = () => {
             </div>
           ))}
         </div>
+      </div>
+    </>
+  );
+}
+function AdminTasks({
+  tasks,
+  saveTasks,
+}) {
+  const [taskForm, setTaskForm] = useState({
+    assignedTo: "",
+    title: "",
+    description: "",
+    remark: "",
+  });
+
+  const handleTaskChange = (e) => {
+    setTaskForm({
+      ...taskForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const assignTask = async (e) => {
+    e.preventDefault();
+
+    if (
+      !taskForm.assignedTo ||
+      !taskForm.title ||
+      !taskForm.description
+    ) {
+      alert("Please fill all task details.");
+      return;
+    }
+
+    const newTask = {
+      id: Date.now(),
+
+      assignedTo: taskForm.assignedTo,
+
+      title: taskForm.title,
+
+      description: taskForm.description,
+
+      remark: taskForm.remark,
+
+      status: "Pending",
+
+      createdAt:
+        new Date().toLocaleString(),
+    };
+
+    const updatedTasks = [
+      ...tasks,
+      newTask,
+    ];
+
+    await saveTasks(updatedTasks);
+
+    setTaskForm({
+      assignedTo: "",
+      title: "",
+      description: "",
+      remark: "",
+    });
+
+    alert("Task assigned successfully!");
+  };
+
+  const markTaskCompleted = async (taskId) => {
+    const updatedTasks = tasks.map(
+      (task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              status: "Completed",
+              completedAt:
+                new Date().toLocaleString(),
+            }
+          : task
+    );
+
+    await saveTasks(updatedTasks);
+  };
+
+  return (
+    <>
+      <div style={pageHeaderStyle}>
+        <div>
+          <h2>📋 Admin Tasks</h2>
+
+          <p
+            style={{
+              color: "#6b7280",
+            }}
+          >
+            Assign and manage warehouse staff tasks.
+          </p>
+        </div>
+      </div>
+
+      <form
+        onSubmit={assignTask}
+        style={sectionStyle}
+      >
+        <h2>➕ Assign New Task</h2>
+
+        <div style={formGridStyle}>
+          <select
+            name="assignedTo"
+            value={taskForm.assignedTo}
+            onChange={handleTaskChange}
+            style={inputStyle}
+          >
+            <option value="">
+              Select Staff
+            </option>
+
+            <option value="Picker">
+              👤 Picker
+            </option>
+
+            <option value="Putaway">
+              📍 Putaway
+            </option>
+
+            <option value="Packer">
+              📦 Packer
+            </option>
+          </select>
+
+          <input
+            name="title"
+            value={taskForm.title}
+            onChange={handleTaskChange}
+            placeholder="Task Title"
+            style={inputStyle}
+          />
+
+          <input
+            name="description"
+            value={taskForm.description}
+            onChange={handleTaskChange}
+            placeholder="Task Description"
+            style={inputStyle}
+          />
+
+          <input
+            name="remark"
+            value={taskForm.remark}
+            onChange={handleTaskChange}
+            placeholder="Remark (Optional)"
+            style={inputStyle}
+          />
+        </div>
+
+        <button
+          type="submit"
+          style={primaryButtonStyle}
+        >
+          📤 Assign Task
+        </button>
+      </form>
+
+      <div style={sectionStyle}>
+        <h2>
+          📋 All Tasks ({tasks.length})
+        </h2>
+
+        {tasks.length === 0 ? (
+          <p
+            style={{
+              color: "#6b7280",
+            }}
+          >
+            No tasks assigned yet.
+          </p>
+        ) : (
+          tasks.map((task) => (
+            <div
+              key={task.id}
+              style={{
+                border: "1px solid #e5e7eb",
+                padding: "18px",
+                borderRadius: "10px",
+                marginBottom: "15px",
+              }}
+            >
+              <h3>
+                {task.title}
+              </h3>
+
+              <p>
+                <b>Assigned To:</b>{" "}
+                {task.assignedTo}
+              </p>
+
+              <p>
+                <b>Task:</b>{" "}
+                {task.description}
+              </p>
+
+              <p>
+                <b>Remark:</b>{" "}
+                {task.remark || "No remark"}
+              </p>
+
+              <p>
+                <b>Status:</b>{" "}
+                {task.status}
+              </p>
+
+              {task.status ===
+                "Pending" && (
+                <button
+                  onClick={() =>
+                    markTaskCompleted(
+                      task.id
+                    )
+                  }
+                  style={{
+                    ...primaryButtonStyle,
+                    background:
+                      "#16a34a",
+                  }}
+                >
+                  ✅ Mark Completed
+                </button>
+              )}
+            </div>
+          ))
+        )}
       </div>
     </>
   );
