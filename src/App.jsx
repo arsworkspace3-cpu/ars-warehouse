@@ -5326,11 +5326,11 @@ const openOrderTracking = (order) => {
     }
 
     
-  OrderNumber =
-      orders.length + 100001;
+  const nextOrderNumber =
+  orders.length + 100001;
 
-    const orderId =
-      "ARS" + nextOrderNumber;
+const orderId =
+  "ARS" + nextOrderNumber;
 
     const newOrder = {
       id: Date.now(),
